@@ -2,18 +2,16 @@ import React, { useState } from 'react';
 import ImageUploader from '../../components/common/ImageUploader';
 import ResultDisplay from './ResultDisplay';
 import { Info } from 'lucide-react';
-import { getAPIUrl } from '../../utils/api';
-import { API_TOKEN } from '../../envs';
 import { useRecoilValue } from 'recoil';
 import { selectedTeamIdState } from '@/store/teams';
+import { useNetwork } from '@/hooks/useNetwork';
 
 export default function FaceRecognition() {
   const selectedTeamId = useRecoilValue(selectedTeamIdState);
   const [result, setResult] = useState<any>(null);
   const [firstImage, setFirstImage] = useState<string | null>(null);
   const [secondImage, setSecondImage] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { makeRequest, isLoading, error } = useNetwork();
 
   const handleFirstImageUpload = async (file: File) => {
     const reader = new FileReader();
@@ -30,14 +28,11 @@ export default function FaceRecognition() {
 
       if (!firstImage || !selectedTeamId) return;
 
-      setIsLoading(true);
-      setError(null);
       setResult(null);
 
       const formData = new FormData();
       formData.append('file1', file);
 
-      // Get the first image file from the data URL
       const firstImageFile = await fetch(firstImage)
         .then((res) => res.blob())
         .then((blob) => new File([blob], 'file1.jpg', { type: 'image/jpeg' }));
@@ -45,28 +40,10 @@ export default function FaceRecognition() {
       formData.append('file2', firstImageFile);
 
       try {
-        const response = await fetch(getAPIUrl(`/recog_faces?team_id=${selectedTeamId}`), {
-          method: 'POST',
-          body: formData,
-          headers: {
-            accept: 'application/json',
-            Authorization: `Bearer ${API_TOKEN}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to compare faces');
-        }
-
-        const data = await response.json();
+        const data = await makeRequest(`/recog_faces?team_id=${selectedTeamId}`, 'POST', formData);
         setResult(data);
       } catch (err) {
         console.error('Error comparing faces:', err);
-        setError(
-          err instanceof Error ? err.message : 'Failed to compare faces'
-        );
-      } finally {
-        setIsLoading(false);
       }
     };
     reader.readAsDataURL(file);

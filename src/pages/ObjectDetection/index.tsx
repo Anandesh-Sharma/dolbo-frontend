@@ -2,21 +2,18 @@ import React, { useState } from 'react';
 import ImageUploader from '../../components/common/ImageUploader';
 import ResultDisplay from './ResultDisplay';
 import { Info } from 'lucide-react';
-import { getAPIUrl } from '../../utils/api';
-import { API_TOKEN } from '../../envs';
 import { useRecoilValue } from 'recoil';
 import { selectedTeamIdState } from '@/store/teams';
+import { useNetwork } from '@/hooks/useNetwork';
 
 export default function ObjectDetection() {
   const selectedTeamId = useRecoilValue(selectedTeamIdState);
   const [result, setResult] = useState<any>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { makeRequest, isLoading, error } = useNetwork();
 
   const handleImageUpload = async (file: File) => {
-    setIsLoading(true);
-    setError(null);
+    setSelectedImage(null);
     setResult(null);
 
     const reader = new FileReader();
@@ -27,28 +24,10 @@ export default function ObjectDetection() {
       formData.append('file', file);
 
       try {
-        const response = await fetch(getAPIUrl(`/detect_objects?team_id=${selectedTeamId}`), {
-          method: 'POST',
-          body: formData,
-          headers: {
-            accept: 'application/json',
-            Authorization: `Bearer ${API_TOKEN}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to detect objects');
-        }
-
-        const data = await response.json();
+        const data = await makeRequest(`/detect_objects?team_id=${selectedTeamId}`, 'POST', formData);
         setResult(data);
       } catch (err) {
         console.error('Error detecting objects:', err);
-        setError(
-          err instanceof Error ? err.message : 'Failed to detect objects'
-        );
-      } finally {
-        setIsLoading(false);
       }
     };
     reader.readAsDataURL(file);

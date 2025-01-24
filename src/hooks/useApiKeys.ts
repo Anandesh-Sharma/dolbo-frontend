@@ -3,11 +3,13 @@ import { useRecoilState } from 'recoil';
 import { apiKeysCacheState, apiKeysLoadingState, apiKeysErrorState } from '../store/apiKeys/atoms';
 import { getAPIUrl } from '../utils/api';
 import { API_TOKEN } from '../envs';
+import { useNetwork } from './useNetwork';
 
 export function useApiKeys() {
   const [cache, setCache] = useRecoilState(apiKeysCacheState);
   const [isLoading, setIsLoading] = useRecoilState(apiKeysLoadingState);
   const [error, setError] = useRecoilState(apiKeysErrorState);
+  const { makeRequest } = useNetwork();
 
   const fetchApiKeys = useCallback(async (teamId: string) => {
     // If we already have data in cache for this team, don't fetch again
@@ -129,12 +131,26 @@ export function useApiKeys() {
     }
   }, [setCache, setIsLoading, setError]);
 
+  const createApikey = async (name: string) => {
+    try {
+      const newKey = await makeRequest('/apikeys', 'POST', { name });
+      setCache(prev => ({
+        ...prev,
+        [name]: [...(prev[name] || []), newKey]
+      }));
+    } catch (err) {
+      console.error('Error creating API key:', err);
+      throw err;
+    }
+  };
+
   return {
     cache,
     isLoading,
     error,
     fetchApiKeys,
     createApiKey,
-    deleteApiKey
+    deleteApiKey,
+    createApikey
   };
 }

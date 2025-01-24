@@ -2,21 +2,18 @@ import React, { useState } from 'react';
 import ImageUploader from '../../components/common/ImageUploader';
 import ResultDisplay from './ResultDisplay';
 import { Info } from 'lucide-react';
-import { getAPIUrl } from '../../utils/api';
-import { API_TOKEN } from '../../envs';
 import { selectedTeamIdState } from '@/store/teams';
 import { useRecoilValue } from 'recoil';
+import { useNetwork } from '@/hooks/useNetwork';
 
 export default function IDVerification() {
   const selectedTeamId = useRecoilValue(selectedTeamIdState);
   const [result, setResult] = useState<any>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { makeRequest, isLoading, error } = useNetwork();
 
   const handleImageUpload = async (file: File) => {
-    setIsLoading(true);
-    setError(null);
+    setSelectedImage(null);
     setResult(null);
 
     const reader = new FileReader();
@@ -27,28 +24,10 @@ export default function IDVerification() {
       formData.append('file', file);
 
       try {
-        const response = await fetch(getAPIUrl(`/doc_id_ver?team_id=${selectedTeamId}`), {
-          method: 'POST',
-          body: formData,
-          headers: {
-            accept: 'application/json',
-            Authorization: `Bearer ${API_TOKEN}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to verify document');
-        }
-
-        const data = await response.json();
+        const data = await makeRequest(`/doc_id_ver?team_id=${selectedTeamId}`, 'POST', formData);
         setResult(data);
       } catch (err) {
         console.error('Error verifying document:', err);
-        setError(
-          err instanceof Error ? err.message : 'Failed to verify document'
-        );
-      } finally {
-        setIsLoading(false);
       }
     };
     reader.readAsDataURL(file);

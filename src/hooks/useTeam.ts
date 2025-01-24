@@ -1,30 +1,16 @@
-// src/hooks/useTeam.ts
-
 import { useCallback } from 'react';
 import { useRecoilState } from 'recoil';
 import { teamsState, selectedTeamIdState } from '../store/teams/atoms';
-import { getAPIUrl } from '../utils/api';
-import { API_TOKEN } from '../envs';
+import { useNetwork } from './useNetwork';
 
 export function useTeam() {
   const [teams, setTeams] = useRecoilState(teamsState);
   const [selectedTeamId, setSelectedTeamId] = useRecoilState(selectedTeamIdState);
+  const { makeRequest, isLoading, error } = useNetwork();
 
   const fetchTeams = useCallback(async () => {
     try {
-      const response = await fetch(getAPIUrl('/teams/list'), {
-        headers: {
-          Authorization: `Bearer ${API_TOKEN}`,
-          accept: 'application/json',
-          "ngrok-skip-browser-warning": "69420"
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch teams');
-      }
-
-      const data = await response.json();
+      const data = await makeRequest('/teams/list', 'GET');
       setTeams(data);
       
       if (!selectedTeamId && data.length > 0) {
@@ -32,36 +18,25 @@ export function useTeam() {
       }
       
       return data;
-    } catch (error) {
-      console.error('Error fetching teams:', error);
-      throw error;
+    } catch (err) {
+      console.error('Error fetching teams:', err);
+      throw err;
     }
-  }, [selectedTeamId, setSelectedTeamId, setTeams]);
+  }, [selectedTeamId, setSelectedTeamId, setTeams, makeRequest]);
 
-  const addMember = useCallback(async (teamId: string, data: { 
+  const addMember = useCallback(async (teamId: string, memberData: { 
     email: string; 
     firstName: string; 
     lastName: string; 
     role: string;
   }) => {
     try {
-      const response = await fetch(getAPIUrl(`/teams/add_member?team_id=${teamId}`), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${API_TOKEN}`,
-          accept: 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to add team member');
-      }
-
-      const newMember = await response.json();
+      const newMember = await makeRequest(
+        `/teams/add_member?team_id=${teamId}`,
+        'POST',
+        memberData
+      );
       
-      // Update teams state with new member
       setTeams(prevTeams => prevTeams.map(team => {
         if (team.id === teamId) {
           return {
@@ -73,30 +48,19 @@ export function useTeam() {
       }));
 
       return newMember;
-    } catch (error) {
-      console.error('Error adding team member:', error);
-      throw error;
+    } catch (err) {
+      console.error('Error adding team member:', err);
+      throw err;
     }
-  }, [setTeams]);
+  }, [setTeams, makeRequest]);
 
   const removeMember = useCallback(async (teamId: string, memberId: string) => {
     try {
-      const response = await fetch(
-        getAPIUrl(`/teams/remove_member?team_id=${teamId}&member_id=${memberId}`),
-        {
-          method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${API_TOKEN}`,
-            accept: 'application/json',
-          },
-        }
+      await makeRequest(
+        `/teams/remove_member?team_id=${teamId}&member_id=${memberId}`,
+        'DELETE'
       );
 
-      if (!response.ok) {
-        throw new Error('Failed to remove team member');
-      }
-
-      // Update teams state by removing the member
       setTeams(prevTeams => prevTeams.map(team => {
         if (team.id === teamId) {
           return {
@@ -108,11 +72,11 @@ export function useTeam() {
       }));
 
       return true;
-    } catch (error) {
-      console.error('Error removing team member:', error);
-      throw error;
+    } catch (err) {
+      console.error('Error removing team member:', err);
+      throw err;
     }
-  }, [setTeams]);
+  }, [setTeams, makeRequest]);
 
   return {
     teams,
@@ -121,5 +85,7 @@ export function useTeam() {
     fetchTeams,
     addMember,
     removeMember,
+    isLoading,
+    error
   };
 }

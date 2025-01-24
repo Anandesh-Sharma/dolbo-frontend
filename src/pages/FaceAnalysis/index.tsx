@@ -3,17 +3,15 @@ import ImageUploader from '../../components/common/ImageUploader';
 import ResultDisplay from './ResultDisplay';
 import { FaceAnalysisResult } from '../../types/faceAnalysis';
 import { Info } from 'lucide-react';
-import { getAPIUrl } from '../../utils/api';
-import { API_TOKEN } from '../../envs';
 import { useRecoilValue } from 'recoil';
 import { selectedTeamIdState } from '@/store/teams';
+import { useNetwork } from '@/hooks/useNetwork';
 
 export default function FaceAnalysis() {
   const selectedTeamId = useRecoilValue(selectedTeamIdState);
   const [result, setResult] = useState<FaceAnalysisResult | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { makeRequest, isLoading, error } = useNetwork();
   const [imageDimensions, setImageDimensions] = useState({
     width: 0,
     height: 0,
@@ -53,8 +51,6 @@ export default function FaceAnalysis() {
   const handleImageUpload = async (file: File) => {
     setResult(null);
     setSelectedImage(null);
-    setIsLoading(true);
-    setError(null);
 
     const reader = new FileReader();
     reader.onload = async () => {
@@ -64,28 +60,10 @@ export default function FaceAnalysis() {
       formData.append('file', file);
 
       try {
-        const response = await fetch(getAPIUrl(`/detect_faces?team_id=${selectedTeamId}`), {
-          method: 'POST',
-          body: formData,
-          headers: {
-            accept: 'application/json',
-            Authorization: `Bearer ${API_TOKEN}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to analyze face');
-        }
-
-        const data: FaceAnalysisResult = await response.json();
+        const data = await makeRequest(`/detect_faces?team_id=${selectedTeamId}`, 'POST', formData);
         setResult(data);
-      } catch (error) {
-        console.error('Error analyzing face:', error);
-        setError(
-          error instanceof Error ? error.message : 'Failed to analyze face'
-        );
-      } finally {
-        setIsLoading(false);
+      } catch (err) {
+        console.error('Error analyzing face:', err);
       }
     };
     reader.readAsDataURL(file);

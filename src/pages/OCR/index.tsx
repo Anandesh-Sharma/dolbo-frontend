@@ -2,21 +2,18 @@ import React, { useState } from 'react';
 import ImageUploader from '../../components/common/ImageUploader';
 import ResultDisplay from './ResultDisplay';
 import { Info } from 'lucide-react';
-import { getAPIUrl } from '../../utils/api';
-import { API_TOKEN } from '../../envs';
 import { useRecoilValue } from 'recoil';
 import { selectedTeamIdState } from '@/store/teams';
+import { useNetwork } from '@/hooks/useNetwork';
 
 export default function OCR() {
   const selectedTeamId = useRecoilValue(selectedTeamIdState);
   const [result, setResult] = useState<any>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { makeRequest, isLoading, error } = useNetwork();
 
   const handleImageUpload = async (file: File) => {
-    setIsLoading(true);
-    setError(null);
+    setSelectedImage(null);
     setResult(null);
 
     const reader = new FileReader();
@@ -27,28 +24,10 @@ export default function OCR() {
       formData.append('file', file);
 
       try {
-        const response = await fetch(getAPIUrl(`/ocr?team_id=${selectedTeamId}`), {
-          method: 'POST',
-          body: formData,
-          headers: {
-            accept: 'application/json',
-            Authorization: `Bearer ${API_TOKEN}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to process image');
-        }
-
-        const data = await response.json();
+        const data = await makeRequest(`/ocr?team_id=${selectedTeamId}`, 'POST', formData);
         setResult(data);
       } catch (err) {
         console.error('Error processing image:', err);
-        setError(
-          err instanceof Error ? err.message : 'Failed to process image'
-        );
-      } finally {
-        setIsLoading(false);
       }
     };
     reader.readAsDataURL(file);
