@@ -18,18 +18,18 @@ import SignUpForm from './components/auth/SignUpForm';
 import AuthLayout from './components/auth/AuthLayout';
 import DashboardLayout from './components/dashboard/DashboardLayout';
 import Overview from './pages/dashboard/Overview';
-import APIKeys from './pages/dashboard/APIKeys';
-import FaceRecognition from './pages/dashboard/FaceRecognition';
-import FaceAnalysis from './pages/dashboard/FaceAnalysis';
-import ObjectDetection from './pages/dashboard/ObjectDetection';
-import OCR from './pages/dashboard/OCR';
-import IDVerification from './pages/dashboard/IDVerification';
-import Billing from './pages/dashboard/Billing';
-import Team from './pages/dashboard/Team';
-import Help from './pages/dashboard/Help';
-import APIReference from './pages/dashboard/APIReference';
-import Profile from './pages/dashboard/Profile';
-import Settings from './pages/dashboard/Settings';
+import APIKeys from './pages/APIKeys';
+import FaceRecognition from './pages/FaceRecognition';
+import FaceAnalysis from './pages/FaceAnalysis';
+import ObjectDetection from './pages/ObjectDetection';
+import OCR from './pages/OCR';
+import IDVerification from './pages/IDVerification';
+import Billing from './pages/Billing';
+import Team from './pages/Team';
+import Help from './pages/Help';
+import APIReference from './pages/APIReference';
+import Profile from './pages/Profile';
+import Settings from './pages/Settings';
 import AppLoader from './components/AppLoader';
 import ErrorBoundary from './components/ErrorBoundary';
 import { 
@@ -40,7 +40,7 @@ import {
 } from './store/teams';
 import { getAPIUrl } from './utils/api';
 import { API_TOKEN } from './envs';
-import ImageEnhancement from './pages/dashboard/ImageEnhancement';
+import ImageEnhancement from './pages/ImageEnhancement';
 
 function AppInitializer() {
   const setTeams = useSetRecoilState(teamsState);
