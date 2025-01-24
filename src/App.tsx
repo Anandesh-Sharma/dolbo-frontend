@@ -40,6 +40,7 @@ import {
 } from './store/teams';
 import { getAPIUrl } from './utils/api';
 import { API_TOKEN } from './envs';
+import ImageEnhancement from './pages/dashboard/ImageEnhancement';
 
 function AppInitializer() {
   const setTeams = useSetRecoilState(teamsState);
@@ -140,6 +141,7 @@ function AppRoutes() {
         <Route path="api-reference" element={<APIReference />} />
         <Route path="profile" element={<Profile />} />
         <Route path="settings" element={<Settings />} />
+        <Route path="image-enhancement" element={<ImageEnhancement />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

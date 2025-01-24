@@ -14,7 +14,8 @@ import {
   HelpCircle,
   UserSearch,
   Code,
-  Hash
+  Hash,
+  Image as ImageIcon
 } from 'lucide-react';
 
 const navigation = [
@@ -22,6 +23,11 @@ const navigation = [
   { name: 'Face Recognition', href: '/dashboard/face-recognition', icon: Camera },
   { name: 'Face Analysis', href: '/dashboard/face-analysis', icon: UserSearch },
   { name: 'Object Detection', href: '/dashboard/object-detection', icon: Scan },
+  {
+    name: 'Image Enhancement',
+    href: '/dashboard/image-enhancement',
+    icon: ImageIcon,
+  },
   { name: 'OCR', href: '/dashboard/ocr', icon: FileText },
   { name: 'ID Verification', href: '/dashboard/id-verification', icon: CreditCard },
 ];
