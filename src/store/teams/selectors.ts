@@ -24,7 +24,7 @@ export const isTeamAdminState = selector({
     const selectedTeam = get(selectedTeamState);
     const members = selectedTeam?.members || [];
     return members.some(
-      (member) => member.roles === 'ADMIN' || member.roles === 'OWNER'
+      (member) => member.role === 'ADMIN' || member.role === 'OWNER'
     );
   },
 });

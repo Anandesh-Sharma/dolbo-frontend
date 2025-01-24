@@ -5,8 +5,11 @@ import { FaceAnalysisResult } from '../../types/faceAnalysis';
 import { Info } from 'lucide-react';
 import { getAPIUrl } from '../../utils/api';
 import { API_TOKEN } from '../../envs';
+import { useRecoilValue } from 'recoil';
+import { selectedTeamIdState } from '@/store/teams';
 
 export default function FaceAnalysis() {
+  const selectedTeamId = useRecoilValue(selectedTeamIdState);
   const [result, setResult] = useState<FaceAnalysisResult | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -61,7 +64,7 @@ export default function FaceAnalysis() {
       formData.append('file', file);
 
       try {
-        const response = await fetch(getAPIUrl('/detect_faces/'), {
+        const response = await fetch(getAPIUrl(`/detect_faces?team_id=${selectedTeamId}`), {
           method: 'POST',
           body: formData,
           headers: {

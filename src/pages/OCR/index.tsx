@@ -4,8 +4,11 @@ import ResultDisplay from './ResultDisplay';
 import { Info } from 'lucide-react';
 import { getAPIUrl } from '../../utils/api';
 import { API_TOKEN } from '../../envs';
+import { useRecoilValue } from 'recoil';
+import { selectedTeamIdState } from '@/store/teams';
 
 export default function OCR() {
+  const selectedTeamId = useRecoilValue(selectedTeamIdState);
   const [result, setResult] = useState<any>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -24,7 +27,7 @@ export default function OCR() {
       formData.append('file', file);
 
       try {
-        const response = await fetch(getAPIUrl('/ocr/'), {
+        const response = await fetch(getAPIUrl(`/ocr?team_id=${selectedTeamId}`), {
           method: 'POST',
           body: formData,
           headers: {

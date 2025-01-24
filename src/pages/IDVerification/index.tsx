@@ -4,8 +4,11 @@ import ResultDisplay from './ResultDisplay';
 import { Info } from 'lucide-react';
 import { getAPIUrl } from '../../utils/api';
 import { API_TOKEN } from '../../envs';
+import { selectedTeamIdState } from '@/store/teams';
+import { useRecoilValue } from 'recoil';
 
 export default function IDVerification() {
+  const selectedTeamId = useRecoilValue(selectedTeamIdState);
   const [result, setResult] = useState<any>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -24,7 +27,7 @@ export default function IDVerification() {
       formData.append('file', file);
 
       try {
-        const response = await fetch(getAPIUrl('/doc_id_ver/'), {
+        const response = await fetch(getAPIUrl(`/doc_id_ver?team_id=${selectedTeamId}`), {
           method: 'POST',
           body: formData,
           headers: {

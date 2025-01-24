@@ -1,10 +1,13 @@
 import React, { useState, useRef } from 'react';
 import { Info } from 'lucide-react';
 import ImageUploader from './ImageUploader';
+import { useRecoilValue } from 'recoil';
+import { selectedTeamIdState } from '@/store/teams';
 
 type EnhancementType = 'enhance' | 'remove-blur' | 'hdr' | 'color-correction' | 'noise-reduction';
 
 export default function ImageEnhancement() {
+  const selectedTeamId = useRecoilValue(selectedTeamIdState);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [enhancedImage, setEnhancedImage] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);

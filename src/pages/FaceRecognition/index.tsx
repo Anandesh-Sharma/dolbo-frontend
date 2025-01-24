@@ -4,8 +4,11 @@ import ResultDisplay from './ResultDisplay';
 import { Info } from 'lucide-react';
 import { getAPIUrl } from '../../utils/api';
 import { API_TOKEN } from '../../envs';
+import { useRecoilValue } from 'recoil';
+import { selectedTeamIdState } from '@/store/teams';
 
 export default function FaceRecognition() {
+  const selectedTeamId = useRecoilValue(selectedTeamIdState);
   const [result, setResult] = useState<any>(null);
   const [firstImage, setFirstImage] = useState<string | null>(null);
   const [secondImage, setSecondImage] = useState<string | null>(null);
@@ -25,7 +28,7 @@ export default function FaceRecognition() {
     reader.onload = async () => {
       setSecondImage(reader.result as string);
 
-      if (!firstImage) return;
+      if (!firstImage || !selectedTeamId) return;
 
       setIsLoading(true);
       setError(null);
@@ -42,7 +45,7 @@ export default function FaceRecognition() {
       formData.append('file2', firstImageFile);
 
       try {
-        const response = await fetch(getAPIUrl('/recog_faces/'), {
+        const response = await fetch(getAPIUrl(`/recog_faces?team_id=${selectedTeamId}`), {
           method: 'POST',
           body: formData,
           headers: {

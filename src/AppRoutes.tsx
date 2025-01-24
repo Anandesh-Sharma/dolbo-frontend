@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect } from 'react';
+import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import 'nprogress/nprogress.css';
 import Navbar from './components/Navbar';
