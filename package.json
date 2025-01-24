@@ -12,6 +12,7 @@
   "dependencies": {
     "@auth0/auth0-react": "^2.2.4",
     "lucide-react": "^0.344.0",
+    "nprogress": "^0.2.0",
     "prismjs": "^1.29.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
+    "@types/nprogress": "^0.2.3",
     "@types/prismjs": "^1.26.3",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",

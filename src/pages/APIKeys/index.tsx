@@ -7,6 +7,7 @@ import { CreateAPIKeyResponse } from '../../types/apiKeys';
 import CreateKeyModal from './CreateKeyModal';
 import ConfirmModal from '../../components/ConfirmModal';
 import PageHeader from '../../components/PageHeader';
+import LoadingState from '@/components/common/LoadingState';
 
 interface StatusBadgeProps {
   status: string;
@@ -95,21 +96,13 @@ export default function APIKeys() {
     </button>
   );
 
-  if (isLoading && !apiKeys.length) {
+  if (isLoading) {
     return (
-      <div className="space-y-8">
-        <PageHeader
-          title="API Keys"
-          description="Manage your API keys and access tokens"
-          action={CreateKeyButton}
-        />
-        <div className="min-h-[calc(100vh-16rem)] flex items-center justify-center">
-          <div className="flex items-center space-x-2 text-gray-400">
-            <div className="animate-spin rounded-full h-5 w-5 border-2 border-blue-500 border-t-transparent" />
-            <span>Loading API keys...</span>
-          </div>
-        </div>
-      </div>
+      <LoadingState
+        message="Loading API keys..."
+        title="API Keys"
+        description="Manage your API keys and access tokens"
+      />
     );
   }
 
