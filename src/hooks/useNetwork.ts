@@ -13,6 +13,7 @@ export const useNetwork = () => {
     try {
       const headers: HeadersInit = {
         accept: 'application/json',
+        "ngrok-skip-browser-warning": "69420"
       };
 
       // Only add Authorization header if API_TOKEN exists

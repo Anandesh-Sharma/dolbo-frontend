@@ -1,16 +1,16 @@
 import { atom } from 'recoil';
-import { DashboardAnalytics } from '../../types/analytics';
+import { Analytics } from '../../types/analytics';
 
-const defaultAnalytics: DashboardAnalytics = {
+const defaultAnalytics: Analytics = {
   total_api_calls: 0,
-  total_users: 0,
   average_response_time: 0,
+  total_cost: '0',
   success_rate: 0,
   recent_calls: [],
   service_usage: []
 };
 
-export const analyticsState = atom<DashboardAnalytics>({
+export const analyticsState = atom<Analytics>({
   key: 'analyticsState',
   default: defaultAnalytics
 });

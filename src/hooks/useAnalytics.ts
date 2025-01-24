@@ -5,11 +5,11 @@ import {
   analyticsLoadingState,
   analyticsErrorState 
 } from '../store/atoms/analytics';
-import { DashboardAnalytics } from '../types/analytics';
+import { Analytics } from '../types/analytics';
 import { selectedTeamIdState } from '@/store/teams';
 import { useNetwork } from './useNetwork';
 
-const analyticsCache = new Map<string, DashboardAnalytics>();
+const analyticsCache = new Map<string, Analytics>();
 
 export function useAnalytics(days: number = 30) {
   const [analytics, setAnalytics] = useRecoilState(analyticsState);

@@ -1,5 +1,5 @@
 import { useAnalytics } from '../../hooks/useAnalytics';
-import { BarChart3, Users, Zap, Clock, Camera } from 'lucide-react';
+import { BarChart3, Zap, Clock, Camera, DollarSign } from 'lucide-react';
 import { RecentCall, ServiceUsage } from '@/types/analytics';
 import PageHeader from '@/components/PageHeader';
 import LoadingState from '@/components/common/LoadingState';
@@ -16,9 +16,9 @@ export default function Overview() {
       change: '+12.5%' 
     },
     { 
-      name: 'Active Users', 
-      value: analytics.total_users.toLocaleString(), 
-      icon: Users, 
+      name: 'Total Cost', 
+      value: `$${Number(analytics.total_cost).toFixed(2)}`, 
+      icon: DollarSign, 
       change: '+8.2%' 
     },
     { 
@@ -70,11 +70,11 @@ export default function Overview() {
           >
             <div className="flex items-center justify-between">
               <stat.icon className="h-6 w-6 text-blue-500" />
-              <span className={`text-sm font-medium ${
+              {/* <span className={`text-sm font-medium ${
                 stat.change.startsWith('+') ? 'text-green-500' : 'text-red-500'
               }`}>
                 {stat.change}
-              </span>
+              </span> */}
             </div>
             <div className="mt-4">
               <h3 className="text-3xl font-semibold text-white">{stat.value}</h3>

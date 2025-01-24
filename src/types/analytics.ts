@@ -10,9 +10,9 @@ export interface RecentCall {
     usage_percentage: number;
   }
   
-  export interface DashboardAnalytics {
+  export interface Analytics {
     total_api_calls: number;
-    total_users: number;
+    total_cost: string;
     average_response_time: number;
     success_rate: number;
     recent_calls: RecentCall[];
