@@ -1,12 +1,18 @@
-import React from 'react';
 import { CreditCard, Plus } from 'lucide-react';
 
-export default function PaymentMethods() {
+interface PaymentMethodsProps {
+  onManageCards: () => void;
+}
+
+export default function PaymentMethods({ onManageCards }: PaymentMethodsProps) {
   return (
     <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-800 p-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-medium text-white">Payment Methods</h3>
-        <button className="p-2 text-gray-400 hover:text-white transition-colors duration-200">
+        <button 
+          onClick={onManageCards}
+          className="p-2 text-gray-400 hover:text-white transition-colors duration-200"
+        >
           <Plus className="h-5 w-5" />
         </button>
       </div>
@@ -29,7 +35,7 @@ export default function PaymentMethods() {
           </div>
         </div>
 
-        <button className="w-full p-4 border-2 border-dashed border-gray-700 rounded-lg text-gray-400 hover:text-white hover:border-gray-600 transition-colors duration-200">
+        <button onClick={onManageCards} className="w-full p-4 border-2 border-dashed border-gray-700 rounded-lg text-gray-400 hover:text-white hover:border-gray-600 transition-colors duration-200">
           <Plus className="h-5 w-5 mx-auto mb-1" />
           <span className="text-sm">Add new card</span>
         </button>

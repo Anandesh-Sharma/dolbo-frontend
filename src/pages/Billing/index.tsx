@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import WalletBalance from './WalletBalance';
 import PaymentMethods from './PaymentMethods';
 import TransactionHistory from './TransactionHistory';
 import AddFundsForm from './AddFundsForm';
+import PaymentMethodModal from '../../components/PaymentMethodModal';
 
 export default function Billing() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <div className="space-y-8">
       <div>
@@ -19,9 +22,14 @@ export default function Billing() {
           <TransactionHistory />
         </div>
         <div>
-          <PaymentMethods />
+          <PaymentMethods onManageCards={() => setIsModalOpen(true)} />
         </div>
       </div>
+
+      <PaymentMethodModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 }
