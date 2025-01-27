@@ -2,11 +2,22 @@ import { useState, useCallback } from 'react';
 import { getAPIUrl } from '../utils/api';
 import { API_TOKEN } from '../envs';
 
+interface RequestOptions<T> {
+  method?: string;
+  url: string;
+  data?: T;
+}
+
+interface NetworkResponse<T> {
+  data?: T;
+  error?: string;
+}
+
 export const useNetwork = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const makeRequest = useCallback(async (endpoint: string, method: string = 'POST', body?: FormData | any) => {
+  const makeRequest = useCallback(async <T = any, R = any>({ method = 'POST', url, data }: RequestOptions<R>): Promise<NetworkResponse<T>> => {
     setIsLoading(true);
     setError(null);
 
@@ -27,27 +38,27 @@ export const useNetwork = () => {
         headers,
       };
 
-      if (body) {
-        if (body instanceof FormData) {
-          requestOptions.body = body;
+      if (data) {
+        if (data instanceof FormData) {
+          requestOptions.body = data;
         } else {
           headers['Content-Type'] = 'application/json';
-          requestOptions.body = JSON.stringify(body);
+          requestOptions.body = JSON.stringify(data);
         }
       }
 
-      const response = await fetch(getAPIUrl(endpoint), requestOptions);
+      const response = await fetch(getAPIUrl(url), requestOptions);
+      const responseData = await response.json();
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || `Request failed with status ${response.status}`);
+        throw new Error(responseData.message || `Request failed with status ${response.status}`);
       }
 
-      return await response.json();
+      return { data: responseData };
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Request failed';
       setError(errorMessage);
-      throw new Error(errorMessage);
+      return { error: errorMessage };
     } finally {
       setIsLoading(false);
     }

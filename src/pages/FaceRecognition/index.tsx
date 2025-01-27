@@ -40,7 +40,11 @@ export default function FaceRecognition() {
       formData.append('file2', firstImageFile);
 
       try {
-        const data = await makeRequest(`/recog_faces?team_id=${selectedTeamId}`, 'POST', formData);
+        const {data} = await makeRequest({
+          method: 'POST',
+          url: `/recog_faces?team_id=${selectedTeamId}`,
+          data: formData
+        });
         setResult(data);
       } catch (err) {
         console.error('Error comparing faces:', err);

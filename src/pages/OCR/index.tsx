@@ -24,7 +24,11 @@ export default function OCR() {
       formData.append('file', file);
 
       try {
-        const data = await makeRequest(`/ocr?team_id=${selectedTeamId}`, 'POST', formData);
+        const {data} = await makeRequest({
+          method: 'POST',
+          url: `/ocr?team_id=${selectedTeamId}`,
+          data: formData
+        });
         setResult(data);
       } catch (err) {
         console.error('Error processing image:', err);

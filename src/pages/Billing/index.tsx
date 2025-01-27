@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { CreditCard } from 'lucide-react';
-import CurrentCreditsCard from '../../components/CurrentCreditsCard';
-import CreditPackagesSection from '../../components/CreditPackagesSection';
+import CurrentCredits from './CurrentCredits';
+import CreditPackagesSection from './CreditPackagesSection';
 import UsageHistorySidebar from '../../components/UsageHistorySidebar';
-import CustomAmountModal from '../../components/CustomAmountModal';
+import CustomAmountModal from './CustomAmountModal';
 
 export default function BillingPage() {
   const [selectedPackage, setSelectedPackage] = useState('pro');
   const [isCustomAmountOpen, setIsCustomAmountOpen] = useState(false);
-  const [currentCredits] = useState(250);
 
   const handleCustomAmount = (amount: number) => {
     // Handle custom amount selection
@@ -35,7 +34,7 @@ export default function BillingPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
         {/* Main Content */}
         <div className="lg:col-span-8 space-y-4 sm:space-y-6">
-          <CurrentCreditsCard currentCredits={currentCredits} />
+          <CurrentCredits />
           <CreditPackagesSection
             selectedPackage={selectedPackage}
             onSelect={setSelectedPackage}

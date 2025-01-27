@@ -4,6 +4,7 @@ import { apiKeysCacheState, apiKeysLoadingState, apiKeysErrorState } from '../st
 import { getAPIUrl } from '../utils/api';
 import { API_TOKEN } from '../envs';
 import { useNetwork } from './useNetwork';
+import { APIKey } from '@/types/apiKeys';
 
 export function useApiKeys() {
   const [cache, setCache] = useRecoilState(apiKeysCacheState);
@@ -133,7 +134,14 @@ export function useApiKeys() {
 
   const createApikey = async (name: string) => {
     try {
-      const newKey = await makeRequest('/apikeys', 'POST', { name });
+      const {data: newKey} = await makeRequest<APIKey>({
+        method: 'POST',
+        url: '/apikeys',
+        data: { name }
+      });
+      if (!newKey) {
+        throw new Error('Failed to create API key');
+      }
       setCache(prev => ({
         ...prev,
         [name]: [...(prev[name] || []), newKey]

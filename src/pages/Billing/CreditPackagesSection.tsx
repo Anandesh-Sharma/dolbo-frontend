@@ -1,6 +1,7 @@
 import React from 'react';
 import { Calculator } from 'lucide-react';
 import CreditPackages from './CreditPackages';
+import { useCheckout } from '@/hooks/useCheckout';
 
 interface CreditPackagesSectionProps {
   selectedPackage: string;
@@ -13,6 +14,8 @@ export default function CreditPackagesSection({
   onSelect,
   onCustomAmount,
 }: CreditPackagesSectionProps) {
+  const { createCheckoutSession, isLoading, error } = useCheckout();
+
   return (
     <div className="space-y-3 sm:space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
@@ -28,10 +31,19 @@ export default function CreditPackagesSection({
           Custom Amount
         </button>
       </div>
+
       <CreditPackages
         selectedPackage={selectedPackage}
         onSelect={onSelect}
+        onCheckout={createCheckoutSession}
+        isLoading={isLoading}
       />
+
+      {error && (
+        <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+          {error}
+        </div>
+      )}
     </div>
   );
 } 

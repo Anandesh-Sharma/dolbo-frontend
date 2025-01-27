@@ -24,7 +24,11 @@ export default function IDVerification() {
       formData.append('file', file);
 
       try {
-        const data = await makeRequest(`/doc_id_ver?team_id=${selectedTeamId}`, 'POST', formData);
+        const {data} = await makeRequest({
+          method: 'POST',
+          url: `/doc_id_ver?team_id=${selectedTeamId}`,
+          data: formData
+        });
         setResult(data);
       } catch (err) {
         console.error('Error verifying document:', err);

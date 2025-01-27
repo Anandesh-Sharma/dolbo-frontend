@@ -35,7 +35,10 @@ export function useAnalytics(days: number = 30) {
       setError(null);
 
       try {
-        const data = await makeRequest(`/dashboard/analytics?team_id=${selectedTeamId}&days=${days}`, 'GET');
+        const {data} = await makeRequest({
+            url: `/dashboard/analytics?team_id=${selectedTeamId}&days=${days}`,
+            method: 'GET'
+        });
         setAnalytics(data);
         analyticsCache.set(cacheKey, data);
       } catch (err) {

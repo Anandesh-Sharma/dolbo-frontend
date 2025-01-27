@@ -60,7 +60,11 @@ export default function FaceAnalysis() {
       formData.append('file', file);
 
       try {
-        const data = await makeRequest(`/detect_faces?team_id=${selectedTeamId}`, 'POST', formData);
+        const {data} = await makeRequest({
+          method: 'POST',
+          url: `/detect_faces?team_id=${selectedTeamId}`,
+          data: formData
+        });
         setResult(data);
       } catch (err) {
         console.error('Error analyzing face:', err);

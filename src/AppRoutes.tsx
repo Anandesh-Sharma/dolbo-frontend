@@ -28,6 +28,9 @@ const Help = React.lazy(() => import('./pages/Help'));
 const APIReference = React.lazy(() => import('./pages/APIReference'));
 const Profile = React.lazy(() => import('./pages/Profile'));
 const Settings = React.lazy(() => import('./pages/Settings'));
+const BillingSuccessPage = React.lazy(() => import('./pages/Billing/Success'));
+const BillingCancelPage = React.lazy(() => import('./pages/Billing/Cancel'));
+
 
 export default function AppRoutes() {
   return (
@@ -66,6 +69,16 @@ export default function AppRoutes() {
           </AuthLayout>
         }
       />
+      <Route path="/billing/success" element={
+            <SuspenseProgress>
+                <BillingSuccessPage />
+            </SuspenseProgress>
+         } />
+      <Route path="/billing/cancel" element={
+            <SuspenseProgress>
+                <BillingCancelPage />
+            </SuspenseProgress>
+         } />
       <Route
         path="/dashboard"
         element={

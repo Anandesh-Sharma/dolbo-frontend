@@ -24,7 +24,11 @@ export default function ObjectDetection() {
       formData.append('file', file);
 
       try {
-        const data = await makeRequest(`/detect_objects?team_id=${selectedTeamId}`, 'POST', formData);
+        const {data} = await makeRequest({
+          method: 'POST',
+          url: `/detect_objects?team_id=${selectedTeamId}`,
+          data: formData
+        });
         setResult(data);
       } catch (err) {
         console.error('Error detecting objects:', err);

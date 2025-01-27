@@ -1,7 +1,8 @@
 import React, { useState, useCallback } from 'react';
-import { X, Calculator } from 'lucide-react';
+import { X, Calculator, Loader2 } from 'lucide-react';
 import Modal from 'react-modal';
 import { debounce } from 'lodash';
+import { useCheckout } from '@/hooks/useCheckout';
 
 const modalStyles = {
   overlay: {
@@ -34,11 +35,11 @@ interface CustomAmountModalProps {
 export default function CustomAmountModal({
   isOpen,
   onClose,
-  onSelect,
 }: CustomAmountModalProps) {
   const [amount, setAmount] = useState<string>('');
   const [isCalculating, setIsCalculating] = useState(false);
   const [calculatedCredits, setCalculatedCredits] = useState<number | null>(null);
+  const { createCheckoutSession, isLoading: isCheckoutLoading, error: checkoutError } = useCheckout();
 
   // Mock API calculation
   const calculateCredits = async (dollars: number) => {
@@ -82,11 +83,9 @@ export default function CustomAmountModal({
     }
   };
 
-  const handleSelect = () => {
-    if (amount && calculatedCredits) {
-      onSelect(parseFloat(amount));
-      onClose();
-    }
+  const handleCheckout = async () => {
+    if (!amount || parseFloat(amount) < 1) return;
+    await createCheckoutSession(parseFloat(amount));
   };
 
   return (
@@ -172,22 +171,31 @@ export default function CustomAmountModal({
               )}
             </div>
 
-            <button
-              onClick={handleSelect}
-              disabled={!amount || isCalculating || !calculatedCredits || parseFloat(amount) < 1}
-              className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600/50 
-                       text-white text-lg font-semibold rounded-2xl transition-colors relative"
-            >
-              {isCalculating ? (
-                <div className="flex items-center justify-center space-x-2">
-                  <div className="w-2 h-2 bg-white/50 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                  <div className="w-2 h-2 bg-white/50 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <div className="w-2 h-2 bg-white/50 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-                </div>
-              ) : (
-                'Select This Amount'
-              )}
-            </button>
+            {calculatedCredits !== null && (
+              <div className="animate-fadeIn">
+                {checkoutError && (
+                  <div className="mt-3 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+                    {checkoutError}
+                  </div>
+                )}
+
+                <button
+                  onClick={handleCheckout}
+                  disabled={isCheckoutLoading}
+                  className="w-full mt-4 py-3 px-4 bg-purple-500 hover:bg-purple-600 disabled:bg-purple-500/50
+                           text-white font-medium rounded-xl transition-colors"
+                >
+                  {isCheckoutLoading ? (
+                    <div className="flex items-center justify-center space-x-2">
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                      <span>Processing...</span>
+                    </div>
+                  ) : (
+                    <span>Pay ${amount}</span>
+                  )}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

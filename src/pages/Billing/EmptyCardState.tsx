@@ -1,4 +1,4 @@
-import CardBrandIcons from './CardBrandIcons';
+import CardBrandIcons from '../../components/CardBrandIcons';
 
 interface EmptyCardStateProps {
   onClick: () => void;
