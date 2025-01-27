@@ -1,11 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Sparkles, Loader2 } from 'lucide-react';
 import { useBilling } from '@/hooks/useBilling';
 import { formatCredits, formatCurrency } from '@/utils/format';
 
 export default function CurrentCredits() {
-  const { balance, isLoading, error } = useBilling();
+  const { balance, isLoading, error, fetchBalance, fetchTransactions } = useBilling();
 
+  useEffect(() => {
+    fetchBalance();
+    fetchTransactions();
+  }, []);
+  
   const credits = balance?.balance ?? 0;
 
   return (

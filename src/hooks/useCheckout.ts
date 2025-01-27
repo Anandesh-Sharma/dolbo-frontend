@@ -18,7 +18,7 @@ export function useCheckout() {
     try {
       const { data, error } = await makeRequest<CheckoutResponse>({
         method: 'POST',
-        url: '/api/billing/checkout_session',
+        url: '/billing/checkout_session',
         data: {
           amount_usd: amount,
           success_url: `${window.location.origin}/billing/success`,

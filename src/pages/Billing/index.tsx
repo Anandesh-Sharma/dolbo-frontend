@@ -2,17 +2,12 @@ import React, { useState } from 'react';
 import { CreditCard } from 'lucide-react';
 import CurrentCredits from './CurrentCredits';
 import CreditPackagesSection from './CreditPackagesSection';
-import UsageHistorySidebar from '../../components/UsageHistorySidebar';
+import UsageHistorySidebar from './UsageHistorySidebar';
 import CustomAmountModal from './CustomAmountModal';
 
 export default function BillingPage() {
   const [selectedPackage, setSelectedPackage] = useState('pro');
   const [isCustomAmountOpen, setIsCustomAmountOpen] = useState(false);
-
-  const handleCustomAmount = (amount: number) => {
-    // Handle custom amount selection
-    setIsCustomAmountOpen(false);
-  };
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
@@ -51,7 +46,6 @@ export default function BillingPage() {
       <CustomAmountModal
         isOpen={isCustomAmountOpen}
         onClose={() => setIsCustomAmountOpen(false)}
-        onSelect={handleCustomAmount}
       />
     </div>
   );

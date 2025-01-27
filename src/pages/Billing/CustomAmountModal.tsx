@@ -29,7 +29,6 @@ const modalStyles = {
 interface CustomAmountModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelect: (amount: number) => void;
 }
 
 export default function CustomAmountModal({
