@@ -22,7 +22,7 @@ export default function DashboardLayout() {
             <Sidebar isCollapsed={isSidebarCollapsed} onToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)} />
           </div>
         </div>
-        <main className={`flex-1 p-2 mt-16 transition-all duration-300 ${
+        <main className={`flex-1 p-4 mt-16 transition-all duration-300 ${
           isSidebarCollapsed ? 'ml-20' : 'ml-64'
         }`}>
           <div className="max-w-7xl mx-auto">

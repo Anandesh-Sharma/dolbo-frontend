@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Check, Sparkles, Loader2 } from 'lucide-react';
+import classNames from 'classnames';
 
 interface CreditPackage {
   id: string;
@@ -60,8 +61,8 @@ export default function CreditPackages({
   };
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div className="space-y-3 sm:space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {packages.map((pkg) => {
           const isSelected = selectedPackage === pkg.id;
           const isHovered = hoveredPackage === pkg.id;
@@ -77,78 +78,76 @@ export default function CreditPackages({
               }}
               onMouseEnter={() => setHoveredPackage(pkg.id)}
               onMouseLeave={() => setHoveredPackage(null)}
-              className={`relative p-4 rounded-2xl border transition-all cursor-pointer group
-                ${isSelected
-                  ? 'border-blue-500 bg-blue-500/10'
-                  : 'border-gray-800 hover:border-gray-700 bg-gray-800/20'
-                }`}
+              className={classNames(
+                "relative p-3 rounded-xl border transition-all cursor-pointer",
+                isSelected
+                  ? "border-blue-500 bg-blue-500/10"
+                  : "border-gray-800 hover:border-gray-700 bg-gray-800/20"
+              )}
             >
               {pkg.isPopular && (
-                <div className="absolute -top-3 left-4 px-3 py-1 bg-blue-500 text-white text-sm rounded-full flex items-center">
-                  <Sparkles className="w-4 h-4 mr-1" />
-                  Most Popular
+                <div className="absolute -top-2 -right-2 px-2 py-0.5 bg-blue-500 text-white text-xs font-medium rounded-full">
+                  Popular
                 </div>
               )}
               
-              <div className="flex justify-between items-start mb-3">
+              <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="text-xl font-semibold text-white">
+                  <h3 className="text-lg font-semibold text-white">
                     {pkg.credits.toLocaleString()} Credits
                   </h3>
                   <div className="flex items-baseline space-x-2">
-                    <span className="text-2xl font-bold text-white">
+                    <span className="text-xl font-bold text-white">
                       {formatPrice(pkg.price)}
                     </span>
                     {pkg.discount && (
-                      <span className="text-sm text-gray-400 line-through">
-                        {formatPrice(pkg.credits / 100)}
-                      </span>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-xs text-gray-400 line-through">
+                          {formatPrice(pkg.credits / 100)}
+                        </span>
+                        <span className="px-1.5 py-0.5 bg-green-500/10 text-green-400 text-xs font-medium rounded">
+                          Save {pkg.discount}%
+                        </span>
+                      </div>
                     )}
                   </div>
                 </div>
                 {isSelected && !isHovered && (
-                  <div className="h-6 w-6 rounded-full bg-blue-500 flex items-center justify-center">
-                    <Check className="h-4 w-4 text-white" />
+                  <div className="h-5 w-5 rounded-full bg-blue-500 flex items-center justify-center">
+                    <Check className="h-3 w-3 text-white" />
                   </div>
                 )}
               </div>
 
               {pkg.discount && (
-                <div className="space-y-2 mb-3">
-                  <div className="flex items-center space-x-2">
-                    <span className="px-2 py-1 bg-green-500/20 text-green-400 text-sm rounded-lg">
-                      Save {pkg.discount}%
-                    </span>
-                    <span className="text-sm text-gray-400">
-                      (${calculateSavings(pkg.credits, pkg.price, pkg.discount)} off)
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-400">
-                    {(pkg.credits / pkg.price).toFixed(0)} credits per dollar
-                  </p>
-                </div>
+                <p className="text-xs text-gray-400 mt-1">
+                  {(pkg.credits / pkg.price).toFixed(0)} credits per dollar
+                </p>
               )}
 
-              {/* Continue Button - Only shows when package is selected and hovered */}
-              <div className={`mt-3 transition-all duration-200 ${
-                isSelected ? 'opacity-100 h-10' : 'opacity-0 h-0 overflow-hidden'
-              }`}>
-                <div className={`flex items-center justify-center w-full py-2 px-4 
-                  bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl 
-                  transition-all ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                >
-                  {isLoading ? (
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                  ) : (
-                    'Continue to Payment'
-                  )}
+              {isSelected && (
+                <div className={`mt-2 transition-all duration-200 ${
+                  isSelected ? 'opacity-100 h-8' : 'opacity-0 h-0 overflow-hidden'
+                }`}>
+                  <button
+                    onClick={() => onCheckout(pkg.price)}
+                    disabled={isLoading}
+                    className={`flex items-center justify-center w-full py-1.5 px-3 
+                      bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg 
+                      transition-all ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    {isLoading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      'Continue to Payment'
+                    )}
+                  </button>
                 </div>
-              </div>
+              )}
             </div>
           );
         })}
       </div>
-
       <div className="mt-6 p-4 rounded-xl bg-gray-800/30 border border-gray-700/50">
         <div className="flex items-start space-x-3">
           <div className="p-2 bg-blue-500/20 rounded-lg">

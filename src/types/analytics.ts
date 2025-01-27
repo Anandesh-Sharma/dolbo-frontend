@@ -2,6 +2,7 @@ export interface RecentCall {
     service_name: string;
     status_code: number;
     response_time: number;
+    service_cost: number;
     created_at: string;
   }
   

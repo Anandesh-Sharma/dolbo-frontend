@@ -13,6 +13,8 @@ export default function CurrentCredits() {
   
   const credits = balance?.balance ?? 0;
 
+  const limit = 1000;
+
   return (
     <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-blue-500/20 backdrop-blur-sm">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0 mb-3">
@@ -45,7 +47,7 @@ export default function CurrentCredits() {
       <div className="h-2 bg-gray-800/50 rounded-full overflow-hidden mb-2">
         <div 
           className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-500"
-          style={{ width: `${(credits / 1000) * 100}%` }}
+          style={{ width: `${(credits / limit) * 100}%` }}
         />
       </div>
       {error ? (

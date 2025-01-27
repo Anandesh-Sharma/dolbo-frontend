@@ -5,11 +5,18 @@ import {
   analyticsLoadingState,
   analyticsErrorState 
 } from '../store/atoms/analytics';
-import { Analytics } from '../types/analytics';
+import { Analytics, RecentCall } from '../types/analytics';
 import { selectedTeamIdState } from '@/store/teams';
 import { useNetwork } from './useNetwork';
 
 const analyticsCache = new Map<string, Analytics>();
+
+const serviceNameMap: Record<string, string> = {
+  'recog-faces': 'Face Recognition',
+  'doc-id-ver': 'Document ID Verification',
+  'detect-faces': 'Face Detection',
+  'ocr': 'Text Recognition (OCR)'
+};
 
 export function useAnalytics(days: number = 30) {
   const [analytics, setAnalytics] = useRecoilState(analyticsState);
@@ -39,6 +46,10 @@ export function useAnalytics(days: number = 30) {
             url: `/dashboard/analytics?team_id=${selectedTeamId}&days=${days}`,
             method: 'GET'
         });
+        data.recent_calls = data.recent_calls.map((call: RecentCall) => ({
+          ...call,
+          service_name: serviceNameMap[call.service_name] || call.service_name
+        }));
         setAnalytics(data);
         analyticsCache.set(cacheKey, data);
       } catch (err) {

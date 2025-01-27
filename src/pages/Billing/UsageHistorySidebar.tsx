@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { History, CreditCard, Loader2 } from 'lucide-react';
-import { useBilling } from '@/hooks/useBilling';
-import { formatCredits, formatCurrency } from '@/utils/format';
 import classNames from 'classnames';
-  
+import { useBilling } from '@/hooks/useBilling';
+import { useAnalytics } from '@/hooks/useAnalytics';
+import { formatCredits, formatCurrency } from '@/utils/format';
+
 type Tab = 'usage' | 'transactions' | 'recent';
 
 export default function UsageHistorySidebar() {
   const [activeTab, setActiveTab] = useState<Tab>('usage');
-  const { transactions, isLoading } = useBilling();
+  const { transactions, isLoading: isLoadingBilling } = useBilling();
+  const { analytics, isLoading: isLoadingAnalytics } = useAnalytics();
 
   const TabButton = ({ tab, label }: { tab: Tab; label: string }) => (
     <button
@@ -33,6 +35,8 @@ export default function UsageHistorySidebar() {
     </div>
   );
 
+  const isLoading = isLoadingBilling || isLoadingAnalytics;
+
   return (
     <div className="lg:sticky lg:top-4">
       <div className="flex items-center space-x-2 mb-3 sm:mb-4">
@@ -51,19 +55,19 @@ export default function UsageHistorySidebar() {
         </div>
       ) : activeTab === 'usage' ? (
         <div className="grid gap-2 sm:gap-3">
-          {[...Array(5)].map((_, i) => (
+          {analytics?.recent_calls?.map((call) => (
             <div
-              key={i}
+              key={call.created_at}
               className="p-3 rounded-xl bg-gray-800/30 border border-gray-700/50 hover:border-gray-600/50 transition-colors"
             >
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="text-sm font-medium text-white">AI Response</p>
+                  <p className="text-sm font-medium text-white">{call.service_name}</p>
                   <p className="text-xs text-gray-400">
-                    {new Date(Date.now() - i * 86400000).toLocaleDateString()}
+                    {new Date(call.created_at).toLocaleDateString()}
                   </p>
                 </div>
-                <span className="text-sm font-medium text-red-400">-10 credits</span>
+                <span className="text-sm font-medium text-red-400">-{call.service_cost} credits</span>
               </div>
             </div>
           ))}

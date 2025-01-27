@@ -8,6 +8,21 @@ import LoadingState from '@/components/common/LoadingState';
 export default function Overview() {
   const { analytics, error, isLoading } = useAnalytics();
 
+  if (!analytics) return (
+    <div className="space-y-8">
+      <PageHeader
+        title="Dashboard Overview"
+        description="Monitor your API usage and performance metrics"
+      />
+
+      {error && (
+        <div className="bg-red-500/10 border border-red-500/50 rounded-lg p-4 text-red-500">
+          {error}
+        </div>
+      )}
+    </div>
+  );
+
   const stats = [
     { 
       name: 'Total API Calls', 
