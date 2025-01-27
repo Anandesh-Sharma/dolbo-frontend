@@ -399,6 +399,14 @@ const result = await response.json();`
   ]
 };
 
+const serviceCredits: Record<string, number> = {
+  'Face Recognition': 10,
+  'Face Analysis': 8,
+  'Object Detection': 6,
+  'OCR': 5,
+  'ID Verification': 12
+};
+
 export default function APIReference() {
   const [activeService, setActiveService] = useState(Object.keys(API_ENDPOINTS)[0]);
   const [activeEndpoint, setActiveEndpoint] = useState(0);
@@ -414,13 +422,13 @@ export default function APIReference() {
   };
 
   return (
-    <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-800">
+    <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-800 h-full">
       <div className="px-6 py-4 border-b border-gray-700">
         <h3 className="text-lg font-medium text-white">API Reference</h3>
       </div>
-      <div className="grid grid-cols-12 divide-x divide-gray-700">
+      <div className="grid grid-cols-12 divide-x divide-gray-700 h-[calc(100%-57px)]">
         {/* Service Navigation */}
-        <div className="col-span-3 border-r border-gray-700">
+        <div className="col-span-2 border-r border-gray-700 overflow-y-auto">
           <nav className="p-4 space-y-2">
             {Object.keys(API_ENDPOINTS).map((service) => (
               <button
@@ -431,18 +439,23 @@ export default function APIReference() {
                 }}
                 className={`w-full text-left px-3 py-2 rounded-lg text-sm ${
                   activeService === service
-                    ? 'bg-blue-500/10 text-blue-400'
-                    : 'text-gray-400 hover:bg-gray-700/50 hover:text-white'
+                    ? 'bg-blue-500/20 text-blue-400'
+                    : 'text-gray-400 hover:bg-gray-800 hover:text-white'
                 }`}
               >
-                {service}
+                <div className="flex justify-between items-center">
+                  <span>{service}</span>
+                  <span className="text-xs px-1.5 py-0.5 rounded bg-gray-800/50 text-gray-400">
+                    {serviceCredits[service]} credits
+                  </span>
+                </div>
               </button>
             ))}
           </nav>
         </div>
 
-        {/* Endpoint Details */}
-        <div className="col-span-9 min-h-[600px]">
+        {/* Main Documentation Area */}
+        <div className="col-span-7 overflow-y-auto">
           <div className="p-6">
             {API_ENDPOINTS[activeService].map((endpoint, index) => (
               <div key={index} className={index === activeEndpoint ? '' : 'hidden'}>
@@ -516,52 +529,54 @@ export default function APIReference() {
                       </div>
                     </div>
                   </div>
-
-                  {/* Code Examples */}
-                  <div>
-                    <h5 className="text-sm font-medium text-white mb-3">Code Examples</h5>
-                    <div className="bg-gray-900/50 rounded-lg overflow-hidden">
-                      <div className="border-b border-gray-700">
-                        <nav className="flex px-4" aria-label="Tabs">
-                          {Object.keys(endpoint.example).map((lang) => (
-                            <button
-                              key={lang}
-                              onClick={() => setActiveTab(lang)}
-                              className={`px-4 py-2 text-sm font-medium border-b-2 ${
-                                activeTab === lang
-                                  ? 'border-blue-500 text-blue-500'
-                                  : 'border-transparent text-gray-400 hover:text-gray-300'
-                              }`}
-                            >
-                              {lang.charAt(0).toUpperCase() + lang.slice(1)}
-                            </button>
-                          ))}
-                        </nav>
-                      </div>
-                      <div className="relative">
-                        <CodeBlock
-                          code={endpoint.example[activeTab as keyof typeof endpoint.example]}
-                          language={activeTab === 'curl' ? 'bash' : activeTab}
-                        />
-                        <button
-                          onClick={() => handleCopy(
-                            endpoint.example[activeTab as keyof typeof endpoint.example],
-                            `${endpoint.name}-${activeTab}`
-                          )}
-                          className="absolute top-2 right-2 p-2 text-gray-400 hover:text-white rounded-lg bg-gray-800/50 hover:bg-gray-700/50 transition-colors duration-200"
-                        >
-                          {copiedStates[`${endpoint.name}-${activeTab}`] ? (
-                            <Check className="h-4 w-4 text-green-500" />
-                          ) : (
-                            <Copy className="h-4 w-4" />
-                          )}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Code Examples - Right side */}
+        <div className="col-span-3 overflow-y-auto">
+          <div className="p-6">
+            <h5 className="text-sm font-medium text-white mb-3">Code Examples</h5>
+            <div className="bg-gray-900/50 rounded-lg overflow-hidden">
+              <div className="border-b border-gray-700">
+                <nav className="flex px-4" aria-label="Tabs">
+                  {Object.keys(API_ENDPOINTS[activeService][activeEndpoint].example).map((lang) => (
+                    <button
+                      key={lang}
+                      onClick={() => setActiveTab(lang)}
+                      className={`px-4 py-2 text-sm font-medium border-b-2 ${
+                        activeTab === lang
+                          ? 'border-blue-500 text-blue-500'
+                          : 'border-transparent text-gray-400 hover:text-gray-300'
+                      }`}
+                    >
+                      {lang.charAt(0).toUpperCase() + lang.slice(1)}
+                    </button>
+                  ))}
+                </nav>
+              </div>
+              <div className="relative">
+                <CodeBlock
+                  code={API_ENDPOINTS[activeService][activeEndpoint].example[activeTab as keyof typeof API_ENDPOINTS[typeof activeService][typeof activeEndpoint]['example']]}
+                  language={activeTab === 'curl' ? 'bash' : activeTab}
+                />
+                <button
+                  onClick={() => handleCopy(
+                    API_ENDPOINTS[activeService][activeEndpoint].example[activeTab as keyof typeof API_ENDPOINTS[typeof activeService][typeof activeEndpoint]['example']],
+                    `${API_ENDPOINTS[activeService][activeEndpoint].name}-${activeTab}`
+                  )}
+                  className="absolute top-2 right-2 p-2 text-gray-400 hover:text-white rounded-lg bg-gray-800/50 hover:bg-gray-700/50 transition-colors duration-200"
+                >
+                  {copiedStates[`${API_ENDPOINTS[activeService][activeEndpoint].name}-${activeTab}`] ? (
+                    <Check className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <Copy className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

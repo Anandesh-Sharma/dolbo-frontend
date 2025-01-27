@@ -5,7 +5,7 @@ import {
   analyticsLoadingState,
   analyticsErrorState 
 } from '../store/atoms/analytics';
-import { Analytics, RecentCall } from '../types/analytics';
+import { Analytics, RecentCall, ServiceUsage } from '../types/analytics';
 import { selectedTeamIdState } from '@/store/teams';
 import { useNetwork } from './useNetwork';
 
@@ -42,16 +42,22 @@ export function useAnalytics(days: number = 30) {
       setError(null);
 
       try {
-        const {data} = await makeRequest({
+        const {data} = await makeRequest<Analytics>({
             url: `/dashboard/analytics?team_id=${selectedTeamId}&days=${days}`,
             method: 'GET'
         });
-        data.recent_calls = data.recent_calls.map((call: RecentCall) => ({
-          ...call,
-          service_name: serviceNameMap[call.service_name] || call.service_name
-        }));
-        setAnalytics(data);
-        analyticsCache.set(cacheKey, data);
+        if (data) {
+          data.recent_calls = data.recent_calls.map((call: RecentCall) => ({
+            ...call,
+            service_name: serviceNameMap[call.service_name] || call.service_name
+          }));
+          data.service_usage = data.service_usage.map((usage: ServiceUsage) => ({
+            ...usage,
+            service_name: serviceNameMap[usage.service_name] || usage.service_name
+          }));
+          setAnalytics(data);
+          analyticsCache.set(cacheKey, data);
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch analytics data');
       } finally {

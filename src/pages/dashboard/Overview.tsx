@@ -1,5 +1,5 @@
 import { useAnalytics } from '../../hooks/useAnalytics';
-import { BarChart3, Zap, Clock, Camera, DollarSign } from 'lucide-react';
+import { BarChart3, Zap, Clock, Camera, Coins } from 'lucide-react';
 import { RecentCall, ServiceUsage } from '@/types/analytics';
 import PageHeader from '@/components/PageHeader';
 import LoadingState from '@/components/common/LoadingState';
@@ -23,30 +23,39 @@ export default function Overview() {
     </div>
   );
 
+  const getSuccessRateColor = (rate: number) => {
+    if (rate >= 95) return 'text-green-400'; // Excellent
+    if (rate >= 85) return 'text-yellow-400'; // Warning
+    return 'text-red-400'; // Poor
+  };
+
   const stats = [
     { 
       name: 'Total API Calls', 
       value: analytics.total_api_calls.toLocaleString(), 
-      icon: Zap, 
-      change: '+12.5%' 
+      icon: Zap,
+      valueClass: 'text-2xl'
     },
     { 
-      name: 'Total Cost', 
-      value: `$${Number(analytics.total_cost).toFixed(2)}`, 
-      icon: DollarSign, 
-      change: '+8.2%' 
+      name: 'Credits Used',
+      value: `-${Number(analytics.total_cost).toLocaleString()}`,
+      suffix: 'credits',
+      icon: Coins,
+      valueClass: 'text-2xl text-red-400'
     },
     { 
       name: 'Avg Response Time', 
-      value: `${analytics.average_response_time}ms`, 
-      icon: Clock, 
-      change: '-3.1%' 
+      value: analytics.average_response_time,
+      suffix: 'ms',
+      icon: Clock,
+      valueClass: 'text-2xl'
     },
     { 
       name: 'Success Rate', 
-      value: `${analytics.success_rate}%`, 
-      icon: BarChart3, 
-      change: '+0.3%' 
+      value: analytics.success_rate,
+      suffix: '%',
+      icon: BarChart3,
+      valueClass: `text-2xl ${getSuccessRateColor(analytics.success_rate)}`,
     },
   ];
 
@@ -85,14 +94,18 @@ export default function Overview() {
           >
             <div className="flex items-center justify-between">
               <stat.icon className="h-6 w-6 text-blue-500" />
-              {/* <span className={`text-sm font-medium ${
-                stat.change.startsWith('+') ? 'text-green-500' : 'text-red-500'
-              }`}>
-                {stat.change}
-              </span> */}
             </div>
             <div className="mt-4">
-              <h3 className="text-3xl font-semibold text-white">{stat.value}</h3>
+              <div className="flex items-baseline">
+                <h3 className={`font-semibold ${stat.valueClass}`}>
+                  {stat.value}
+                </h3>
+                {stat.suffix && (
+                  <span className="ml-1 text-base text-gray-400">
+                    {stat.suffix}
+                  </span>
+                )}
+              </div>
               <p className="mt-1 text-sm text-gray-400">{stat.name}</p>
             </div>
           </div>
@@ -105,7 +118,10 @@ export default function Overview() {
           <div className="mt-4 space-y-4">
             {recentActivity.length > 0 ? (
               recentActivity.map((activity) => (
-                <div key={`${activity.service_name}-${activity.created_at}`} className="flex items-center justify-between">
+                <div 
+                  key={`${activity.service_name}-${activity.created_at}`} 
+                  className="grid grid-cols-[auto,1fr,auto] items-center gap-3 group hover:bg-gray-800/30 p-3 rounded-lg transition-colors"
+                >
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-blue-500/10 rounded-full flex items-center justify-center">
                       <Camera className="h-5 w-5 text-blue-500" />
@@ -115,7 +131,20 @@ export default function Overview() {
                       <p className="text-xs text-gray-400">{activity.created_at}</p>
                     </div>
                   </div>
-                  <span className="text-xs text-gray-400">{activity.status_code}</span>
+                  <div className="flex justify-center">
+                    <span className="text-xs text-red-400 tabular-nums">
+                      -{activity.service_cost} credits
+                    </span>
+                  </div>
+                  <div className="flex justify-end">
+                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                      activity.status_code === 200 
+                        ? 'bg-green-500/10 text-green-400' 
+                        : 'bg-red-500/10 text-red-400'
+                    }`}>
+                      {activity.status_code}
+                    </span>
+                  </div>
                 </div>
               ))
             ) : (

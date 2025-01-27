@@ -47,6 +47,17 @@ export default function AppRoutes() {
           </div>
         }
       />
+       <Route
+          path="/api-reference"
+          element={
+            <SuspenseProgress>
+              <div className="min-h-screen bg-gray-900 text-white">
+                <Navbar />
+                <APIReference />
+              </div>
+            </SuspenseProgress>
+          }
+       />
       <Route
         path="/signin"
         element={
@@ -172,14 +183,6 @@ export default function AppRoutes() {
           element={
             <SuspenseProgress>
               <Help />
-            </SuspenseProgress>
-          }
-        />
-        <Route
-          path="api-reference"
-          element={
-            <SuspenseProgress>
-              <APIReference />
             </SuspenseProgress>
           }
         />

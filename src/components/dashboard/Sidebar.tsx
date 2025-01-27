@@ -15,7 +15,8 @@ import {
   UserSearch,
   Code,
   Hash,
-  Image as ImageIcon
+  Image as ImageIcon,
+  ExternalLink
 } from 'lucide-react';
 
 const navigation = [
@@ -34,7 +35,12 @@ const navigation = [
 
 const resources = [
   { name: 'API Keys', href: '/dashboard/api-keys', icon: Key },
-  { name: 'API Reference', href: '/dashboard/api-reference', icon: Code },
+  { 
+    name: 'API Reference', 
+    href: '/api-reference', 
+    icon: Code,
+    isExternal: true
+  },
   { name: 'Billing', href: '/dashboard/billing', icon: Wallet },
   { name: 'Team', href: '/dashboard/team', icon: Users },
   { name: 'Help', href: '/dashboard/help', icon: HelpCircle },
@@ -97,21 +103,40 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
           </div>
           <nav className="space-y-1">
             {resources.map((item) => (
-              <NavLink
-                key={item.name}
-                to={item.href}
-                className={({ isActive }) =>
-                  `flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
-                    isActive
-                      ? 'bg-blue-500/10 text-blue-400'
-                      : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
-                  }`
-                }
-                title={isCollapsed ? item.name : undefined}
-              >
-                <item.icon className={`h-5 w-5 ${isCollapsed ? 'mx-auto' : 'mr-3'}`} />
-                {!isCollapsed && <span>{item.name}</span>}
-              </NavLink>
+              item.isExternal ? (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-gray-400 hover:text-white hover:bg-gray-800/50`}
+                  title={isCollapsed ? item.name : undefined}
+                >
+                  <item.icon className={`h-5 w-5 ${isCollapsed ? 'mx-auto' : 'mr-3'}`} />
+                  {!isCollapsed && (
+                    <div className="flex items-center">
+                      <span>{item.name}</span>
+                      <ExternalLink className="ml-1.5 h-3.5 w-3.5" />
+                    </div>
+                  )}
+                </a>
+              ) : (
+                <NavLink
+                  key={item.name}
+                  to={item.href}
+                  className={({ isActive }) =>
+                    `flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                      isActive
+                        ? 'bg-blue-500/10 text-blue-400'
+                        : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
+                    }`
+                  }
+                  title={isCollapsed ? item.name : undefined}
+                >
+                  <item.icon className={`h-5 w-5 ${isCollapsed ? 'mx-auto' : 'mr-3'}`} />
+                  {!isCollapsed && <span>{item.name}</span>}
+                </NavLink>
+              )
             ))}
           </nav>
         </div>
