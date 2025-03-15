@@ -70,7 +70,9 @@ export default function CreateTeamModal({
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create team');
+        const errorData = await response.json(); // Parse the response as JSON
+        const errorMessage = errorData.detail || 'Failed to create team'; // Extract the detail message
+        throw new Error(errorMessage);
       }
 
       const newTeam = await response.json();
