@@ -8,10 +8,12 @@ import Services from './components/Services';
 import Footer from './components/Footer';
 import SignInForm from './components/auth/SignInForm';
 import SignUpForm from './components/auth/SignUpForm';
+import SignupSuccess from './pages/auth/SignupSuccess';
 import AuthLayout from './components/auth/AuthLayout';
 import DashboardLayout from './components/dashboard/DashboardLayout';
-import AppLoader from './components/AppLoader';
 import SuspenseProgress from './components/SuspenseProgress';
+import AuthGuard from './components/auth/AuthGuard';
+import { useAuth } from './hooks/useAuth';
 
 // Lazy load all dashboard pages
 const Overview = React.lazy(() => import('./pages/dashboard/Overview'));
@@ -25,77 +27,77 @@ const IDVerification = React.lazy(() => import('./pages/IDVerification'));
 const Billing = React.lazy(() => import('./pages/Billing'));
 const Team = React.lazy(() => import('./pages/Team'));
 const Help = React.lazy(() => import('./pages/Help'));
-const APIReference = React.lazy(() => import('./pages/APIReference'));
 const Profile = React.lazy(() => import('./pages/Profile'));
 const Settings = React.lazy(() => import('./pages/Settings'));
-const BillingSuccessPage = React.lazy(() => import('./pages/Billing/Success'));
-const BillingCancelPage = React.lazy(() => import('./pages/Billing/Cancel'));
-
 
 export default function AppRoutes() {
+  const { isAuthenticated } = useAuth();
+
   return (
     <Routes>
+      {/* Public routes */}
       <Route
         path="/"
         element={
-          <div className="min-h-screen bg-gray-900 text-white">
-            <Navbar />
-            <Hero />
-            <Features />
-            <Services />
-            <Footer />
-          </div>
+          isAuthenticated ? (
+            <Navigate to="/dashboard" replace />
+          ) : (
+            <>
+              <Navbar />
+              <Hero />
+              <Features />
+              <Services />
+              <Footer />
+            </>
+          )
         }
       />
-       <Route
-          path="/api-reference"
-          element={
-            <SuspenseProgress>
-              <div className="min-h-screen bg-gray-900 text-white">
-                <Navbar />
-                <APIReference />
-              </div>
-            </SuspenseProgress>
-          }
-       />
+
+      {/* Auth routes */}
       <Route
         path="/signin"
         element={
-          <AuthLayout
-            title="Welcome back"
-            subtitle="Sign in to your account to continue"
-          >
-            <SignInForm />
-          </AuthLayout>
+          isAuthenticated ? (
+            <Navigate to="/dashboard" replace />
+          ) : (
+            <AuthLayout title="Welcome back" subtitle="Sign in to your account">
+              <SignInForm />
+            </AuthLayout>
+          )
         }
       />
+
       <Route
         path="/signup"
         element={
-          <AuthLayout
-            title="Create an account"
-            subtitle="Start your 14-day free trial"
-          >
-            <SignUpForm />
-          </AuthLayout>
+          isAuthenticated ? (
+            <Navigate to="/dashboard" replace />
+          ) : (
+            <AuthLayout title="Create an account" subtitle="Start your free trial">
+              <SignUpForm />
+            </AuthLayout>
+          )
         }
       />
-      <Route path="/billing/success" element={
-            <SuspenseProgress>
-                <BillingSuccessPage />
-            </SuspenseProgress>
-         } />
-      <Route path="/billing/cancel" element={
-            <SuspenseProgress>
-                <BillingCancelPage />
-            </SuspenseProgress>
-         } />
+
+      <Route
+        path="/signup/success"
+        element={
+          isAuthenticated ? (
+            <Navigate to="/dashboard" replace />
+          ) : (
+            <SignupSuccess />
+          )
+        }
+      />
+
+      {/* Protected routes */}
       <Route
         path="/dashboard"
         element={
-          <AppLoader>
+          <AuthGuard>
             <DashboardLayout />
-          </AppLoader>
+          </AuthGuard>
         }
       >
         <Route
@@ -203,6 +205,8 @@ export default function AppRoutes() {
           }
         />
       </Route>
+
+      {/* Catch all */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

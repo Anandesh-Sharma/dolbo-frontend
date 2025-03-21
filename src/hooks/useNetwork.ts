@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
+import { useRecoilValue } from 'recoil';
 import { getAPIUrl } from '../utils/api';
-import { API_TOKEN } from '../envs';
+import { authTokenState } from '../store/auth';
 
 interface RequestOptions<T> {
   method?: string;
@@ -16,6 +17,7 @@ interface NetworkResponse<T> {
 export const useNetwork = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const authToken = useRecoilValue(authTokenState);
 
   const makeRequest = useCallback(async <T = any, R = any>({ method = 'POST', url, data }: RequestOptions<R>): Promise<NetworkResponse<T>> => {
     setIsLoading(true);
@@ -27,9 +29,9 @@ export const useNetwork = () => {
         "ngrok-skip-browser-warning": "69420"
       };
 
-      // Only add Authorization header if API_TOKEN exists
-      if (API_TOKEN) {
-        headers.Authorization = `Bearer ${API_TOKEN}`;
+      // Add Authorization header if we have an auth token
+      if (authToken?.access_token) {
+        headers.Authorization = `Bearer ${authToken.access_token}`;
       }
 
       // Handle FormData differently from regular JSON
@@ -62,7 +64,7 @@ export const useNetwork = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [authToken]);
 
   return { makeRequest, isLoading, error };
 }; 

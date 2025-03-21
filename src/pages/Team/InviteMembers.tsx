@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Send, Loader2 } from 'lucide-react';
+import { useRecoilValue } from 'recoil';
 import { Team } from '../../types/teams';
 import { getAPIUrl } from '../../utils/api';
-import { API_TOKEN } from '../../envs';
+import { authTokenState } from '../../store/auth';
 
 interface InviteMembersProps {
   team: Team;
@@ -11,6 +12,7 @@ interface InviteMembersProps {
 export default function InviteMembers({ team }: InviteMembersProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const authToken = useRecoilValue(authTokenState);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -28,7 +30,7 @@ export default function InviteMembers({ team }: InviteMembersProps) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${API_TOKEN}`,
+          Authorization: `Bearer ${authToken?.access_token}`,
         },
         body: JSON.stringify(invitation),
       });

@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { apiKeysCacheState, apiKeysLoadingState, apiKeysErrorState } from '../store/apiKeys/atoms';
 import { getAPIUrl } from '../utils/api';
-import { API_TOKEN } from '../envs';
+import { authTokenState } from '../store/auth';
 import { useNetwork } from './useNetwork';
 import { APIKey } from '@/types/apiKeys';
 
@@ -10,6 +10,7 @@ export function useApiKeys() {
   const [cache, setCache] = useRecoilState(apiKeysCacheState);
   const [isLoading, setIsLoading] = useRecoilState(apiKeysLoadingState);
   const [error, setError] = useRecoilState(apiKeysErrorState);
+  const authToken = useRecoilValue(authTokenState);
   const { makeRequest } = useNetwork();
 
   const fetchApiKeys = useCallback(async (teamId: string) => {
@@ -26,7 +27,7 @@ export function useApiKeys() {
         `${getAPIUrl('/api_keys/list')}?team_id=${teamId}`,
         {
           headers: {
-            Authorization: `Bearer ${API_TOKEN}`,
+            Authorization: `Bearer ${authToken?.access_token}`,
             accept: 'application/json',
             "ngrok-skip-browser-warning": "69420"
           },
@@ -53,7 +54,7 @@ export function useApiKeys() {
     } finally {
       setIsLoading(false);
     }
-  }, [setCache, setIsLoading, setError, cache]);
+  }, [setCache, setIsLoading, setError, cache, authToken]);
 
   const createApiKey = useCallback(async (teamId: string, name: string, expiry: string) => {
     setIsLoading(true);
@@ -65,7 +66,7 @@ export function useApiKeys() {
         {
           method: 'POST',
           headers: {
-            Authorization: `Bearer ${API_TOKEN}`,
+            Authorization: `Bearer ${authToken?.access_token}`,
             'Content-Type': 'application/json',
             accept: 'application/json',
           },
@@ -96,7 +97,7 @@ export function useApiKeys() {
     } finally {
       setIsLoading(false);
     }
-  }, [setCache, setIsLoading, setError]);
+  }, [setCache, setIsLoading, setError, authToken]);
 
   const deleteApiKey = useCallback(async (teamId: string, keyId: string) => {
     setIsLoading(true);
@@ -108,7 +109,7 @@ export function useApiKeys() {
         {
           method: 'DELETE',
           headers: {
-            Authorization: `Bearer ${API_TOKEN}`,
+            Authorization: `Bearer ${authToken?.access_token}`,
             accept: 'application/json',
           },
         }
@@ -130,7 +131,7 @@ export function useApiKeys() {
     } finally {
       setIsLoading(false);
     }
-  }, [setCache, setIsLoading, setError]);
+  }, [setCache, setIsLoading, setError, authToken]);
 
   const createApikey = async (name: string) => {
     try {
