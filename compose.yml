@@ -1,17 +1,24 @@
+version: '3.8'
+
 services:
-  dolbo.frontend:
-    container_name: dolbo.frontend
-    restart: unless-stopped
+  frontend:
     build:
       context: .
       dockerfile: docker/Dockerfile
+    ports:
+      - "3000:80"
     environment:
-      DOMAIN: "https://"
-    expose:
-      - "3000"
+      - VITE_API_URL=http://dolbo.backend:8000
     networks:
-      - nginx_proxy_manager_default
+      - dolbo_network
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:80/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
 networks:
-  nginx_proxy_manager_default:
-    external: true
+  dolbo_network:
+    driver: bridge
+

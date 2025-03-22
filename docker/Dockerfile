@@ -1,42 +1,32 @@
-FROM node:22-alpine AS build
+# Build stage
+FROM node:18-alpine AS build
 
-WORKDIR /app/
+# Set working directory
+WORKDIR /app
 
-COPY package*.json /app/
+# Copy package files
+COPY package*.json ./
 
+# Install dependencies
 RUN npm ci
 
-COPY . /app/
+# Copy source code
+COPY . .
 
+# Build the application
 RUN npm run build
 
-FROM nginx:1.26-alpine AS run
+# Production stage
+FROM nginx:alpine
 
-RUN apk --no-cache add shadow npm git vim
+# Copy built assets from build stage
+COPY --from=build /app/dist /usr/share/nginx/html
 
-RUN usermod -u 1001 nginx
+# Copy nginx configuration
+COPY ./docker/nginx.conf /etc/nginx/conf.d/default.conf
 
-#RUN npm i -g @beam-australia/react-env
+# Expose port 80
+EXPOSE 80
 
-COPY --chown=nginx --from=build /app/dist/ /usr/share/nginx/html
-
-COPY docker/entrypoint.sh /entrypoint.sh
-RUN chmod a+x /entrypoint.sh
-
-COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
-
-RUN chown -R nginx:nginx /var/cache/nginx && \
-    chown -R nginx:nginx /var/log/nginx && \
-    chown -R nginx:nginx /etc/nginx/conf.d && \
-    chown -R nginx:nginx /usr/share/nginx/html
-
-RUN touch /var/run/nginx.pid && \
-    chown -R nginx:nginx /var/run/nginx.pid
-
-USER nginx
-
-EXPOSE 3000
-
-HEALTHCHECK CMD curl -f http://127.0.0.1:3000 || exit 1
-
-ENTRYPOINT ["/entrypoint.sh"]
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]
