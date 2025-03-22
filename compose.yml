@@ -1,0 +1,17 @@
+services:
+  dolbo.frontend:
+    container_name: dolbo.frontend
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    environment:
+      DOMAIN: "https://"
+    expose:
+      - "3000"
+    networks:
+      - nginx_proxy_manager_default
+
+networks:
+  nginx_proxy_manager_default:
+    external: true
