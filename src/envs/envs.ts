@@ -1,4 +1,4 @@
-export const API_HOST = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+export const API_HOST = 'https://api-beta.dolbo.ai';
 
 // Remove the hardcoded token since we're using dynamic auth now
 // export const API_TOKEN = '...';
