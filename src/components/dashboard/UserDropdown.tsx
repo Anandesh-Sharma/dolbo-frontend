@@ -1,19 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth0 } from '@auth0/auth0-react';
+import { Link } from 'react-router-dom';
 import { 
-  User, 
   Bell,
   Key,
   LogOut,
   UserCircle
 } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { user, logout } = useAuth0();
-  const navigate = useNavigate();
+  const { logout } = useAuth();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -27,36 +25,23 @@ export default function UserDropdown() {
   }, []);
 
   const handleLogout = () => {
-    logout({ 
-      logoutParams: {
-        returnTo: window.location.origin 
-      }
-    });
+    logout();
+    setIsOpen(false);
   };
 
   return (
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 p-2 text-gray-400 hover:text-white transition-colors duration-200"
+        className="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
       >
-        <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center">
-          {user?.picture ? (
-            <img src={user.picture} alt={user.name} className="w-8 h-8 rounded-full" />
-          ) : (
-            <User className="h-5 w-5" />
-          )}
+        <div className="h-8 w-8 rounded-full bg-gray-700 flex items-center justify-center">
+          <UserCircle className="h-5 w-5 text-gray-300" />
         </div>
-        <span>{user?.name}</span>
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 bg-gray-800 rounded-lg shadow-lg py-2 border border-gray-700 z-50">
-          <div className="px-4 py-2 border-b border-gray-700">
-            <p className="text-sm text-white font-medium">{user?.name}</p>
-            <p className="text-xs text-gray-400">{user?.email}</p>
-          </div>
-
+        <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
           <div className="py-1">
             <Link
               to="/dashboard/profile"

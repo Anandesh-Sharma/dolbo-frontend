@@ -1,10 +1,10 @@
 import React, { useState, useRef } from 'react';
 import Modal from 'react-modal';
 import { X, Loader2, Users, CheckCircle } from 'lucide-react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { teamsState, selectedTeamIdState } from '../store/teams';
 import { getAPIUrl } from '../utils/api';
-import { API_TOKEN } from '../envs';
+import { authTokenState } from '../store/auth';
 
 if (typeof window !== 'undefined') {
   Modal.setAppElement('#root');
@@ -45,6 +45,7 @@ export default function CreateTeamModal({
   const [success, setSuccess] = useState(false);
   const [teams, setTeams] = useRecoilState(teamsState);
   const [, setSelectedTeamId] = useRecoilState(selectedTeamIdState);
+  const authToken = useRecoilValue(authTokenState);
   const formRef = useRef<HTMLFormElement>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -63,14 +64,16 @@ export default function CreateTeamModal({
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${API_TOKEN}`,
+          Authorization: `Bearer ${authToken?.access_token}`,
           accept: 'application/json',
         },
         body: JSON.stringify(data),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create team');
+        const errorData = await response.json();
+        const errorMessage = errorData.detail || 'Failed to create team';
+        throw new Error(errorMessage);
       }
 
       const newTeam = await response.json();
