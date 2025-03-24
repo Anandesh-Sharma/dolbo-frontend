@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
-import nprogress from 'nprogress';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
 import 'nprogress/nprogress.css';
 import { 
   teamsState, 
@@ -9,7 +8,7 @@ import {
   teamsInitializedState 
 } from './store/teams';
 import { getAPIUrl } from './utils/api';
-import { API_TOKEN } from './envs';
+import { authTokenState } from './store/auth';
 import AppRoutes from './AppRoutes';
 
 export default function AppInitializer() {
@@ -17,13 +16,14 @@ export default function AppInitializer() {
   const setSelectedTeamId = useSetRecoilState(selectedTeamIdState);
   const setIsLoading = useSetRecoilState(teamsLoadingState);
   const setIsInitialized = useSetRecoilState(teamsInitializedState);
+  const authToken = useRecoilValue(authTokenState);
 
   useEffect(() => {
     async function initializeTeams() {
       try {
         const response = await fetch(getAPIUrl('/teams/list'), {
           headers: {
-            Authorization: `Bearer ${API_TOKEN}`,
+            Authorization: `Bearer ${authToken?.access_token}`,
             accept: 'application/json',
             "ngrok-skip-browser-warning": "69420"
           },
@@ -47,8 +47,10 @@ export default function AppInitializer() {
       }
     }
 
-    initializeTeams();
-  }, [setTeams, setSelectedTeamId, setIsLoading, setIsInitialized]);
+    if (authToken?.access_token) {
+      initializeTeams();
+    }
+  }, [setTeams, setSelectedTeamId, setIsLoading, setIsInitialized, authToken]);
 
   return <AppRoutes />;
 } 

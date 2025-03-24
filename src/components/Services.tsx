@@ -1,4 +1,3 @@
-import React from 'react';
 import { Camera, FileSearch, Scan, Brain } from 'lucide-react';
 
 export default function Services() {

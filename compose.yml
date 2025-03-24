@@ -1,0 +1,15 @@
+services:
+  dolbo-beta.frontend:
+    container_name: dolbo-beta.frontend
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    expose:
+      - "3000"
+    networks:
+      - nginx_proxy_manager_default
+
+networks:
+  nginx_proxy_manager_default:
+    external: true

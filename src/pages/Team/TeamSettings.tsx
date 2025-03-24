@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { teamsState } from '../../store/teams';
 import { Team } from '../../types/teams';
 import { getAPIUrl } from '../../utils/api';
-import { API_TOKEN } from '../../envs';
+import { authTokenState } from '../../store/auth';
 
 interface TeamSettingsProps {
   team: Team;
@@ -11,6 +11,7 @@ interface TeamSettingsProps {
 
 export default function TeamSettings({ team }: TeamSettingsProps) {
   const [teams, setTeams] = useRecoilState(teamsState);
+  const authToken = useRecoilValue(authTokenState);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -19,9 +20,10 @@ export default function TeamSettings({ team }: TeamSettingsProps) {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
+    setSuccess(false);
 
     const formData = new FormData(e.currentTarget);
-    const updatedTeam = {
+    const data = {
       name: formData.get('name'),
       description: formData.get('description'),
     };
@@ -31,28 +33,25 @@ export default function TeamSettings({ team }: TeamSettingsProps) {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${API_TOKEN}`,
-          accept: 'application/json',
+          Authorization: `Bearer ${authToken?.access_token}`,
         },
-        body: JSON.stringify(updatedTeam),
+        body: JSON.stringify(data),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update team');
+        throw new Error('Failed to update team settings');
       }
 
-      const updatedTeamData = await response.json();
+      const updatedTeam = await response.json();
       
       // Update teams state
-      setTeams(teams.map(t => t.id === team.id ? updatedTeamData : t));
+      const updatedTeams = teams.map(t => 
+        t.id === team.id ? updatedTeam : t
+      );
+      setTeams(updatedTeams);
       setSuccess(true);
-
-      // Reset success state after 2 seconds
-      setTimeout(() => {
-        setSuccess(false);
-      }, 2000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update team');
+      setError(err instanceof Error ? err.message : 'Failed to update team settings');
     } finally {
       setIsLoading(false);
     }
