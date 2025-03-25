@@ -17,9 +17,9 @@ export default function DashboardNav() {
         </Link>
         
         <div className="flex items-center space-x-2">
-          <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-800/50 rounded-lg">
+          {/* <button className="p-2 text-gray-400 hover:text-white hover:bg-gray-800/50 rounded-lg">
             <Bell className="h-5 w-5" />
-          </button>
+          </button> */}
           <Link 
             to="/dashboard/settings"
             className="p-2 text-gray-400 hover:text-white hover:bg-gray-800/50 rounded-lg"

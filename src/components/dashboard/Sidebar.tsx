@@ -43,7 +43,7 @@ const resources = [
   },
   { name: 'Billing', href: '/dashboard/billing', icon: Wallet },
   { name: 'Team', href: '/dashboard/team', icon: Users },
-  { name: 'Help', href: '/dashboard/help', icon: HelpCircle },
+  // { name: 'Help', href: '/dashboard/help', icon: HelpCircle },
 ];
 
 interface SidebarProps {
