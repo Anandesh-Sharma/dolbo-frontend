@@ -20,8 +20,8 @@ const Overview = React.lazy(() => import('./pages/dashboard/Overview'));
 const APIKeys = React.lazy(() => import('./pages/APIKeys'));
 const FaceRecognition = React.lazy(() => import('./pages/FaceRecognition'));
 const FaceAnalysis = React.lazy(() => import('./pages/FaceAnalysis'));
-const ImageEnhancement = React.lazy(() => import('./pages/ImageEnhancement'));
-const ObjectDetection = React.lazy(() => import('./pages/ObjectDetection'));
+// const ImageEnhancement = React.lazy(() => import('./pages/ImageEnhancement'));
+// const ObjectDetection = React.lazy(() => import('./pages/ObjectDetection'));
 const OCR = React.lazy(() => import('./pages/OCR'));
 const IDVerification = React.lazy(() => import('./pages/IDVerification'));
 const Billing = React.lazy(() => import('./pages/Billing'));
@@ -142,7 +142,7 @@ export default function AppRoutes() {
             </SuspenseProgress>
           }
         />
-        <Route
+        {/* <Route
           path="image-enhancement"
           element={
             <SuspenseProgress>
@@ -157,7 +157,7 @@ export default function AppRoutes() {
               <ObjectDetection />
             </SuspenseProgress>
           }
-        />
+        /> */}
         <Route
           path="ocr"
           element={
