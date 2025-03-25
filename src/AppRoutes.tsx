@@ -20,15 +20,16 @@ const Overview = React.lazy(() => import('./pages/dashboard/Overview'));
 const APIKeys = React.lazy(() => import('./pages/APIKeys'));
 const FaceRecognition = React.lazy(() => import('./pages/FaceRecognition'));
 const FaceAnalysis = React.lazy(() => import('./pages/FaceAnalysis'));
-const ImageEnhancement = React.lazy(() => import('./pages/ImageEnhancement'));
-const ObjectDetection = React.lazy(() => import('./pages/ObjectDetection'));
+// const ImageEnhancement = React.lazy(() => import('./pages/ImageEnhancement'));
+// const ObjectDetection = React.lazy(() => import('./pages/ObjectDetection'));
 const OCR = React.lazy(() => import('./pages/OCR'));
 const IDVerification = React.lazy(() => import('./pages/IDVerification'));
 const Billing = React.lazy(() => import('./pages/Billing'));
 const Team = React.lazy(() => import('./pages/Team'));
-const Help = React.lazy(() => import('./pages/Help'));
+// const Help = React.lazy(() => import('./pages/Help'));
 const Profile = React.lazy(() => import('./pages/Profile'));
 const Settings = React.lazy(() => import('./pages/Settings'));
+const APIReference = React.lazy(() => import('./pages/APIReference'));
 
 export default function AppRoutes() {
   const { isAuthenticated } = useAuth();
@@ -91,6 +92,15 @@ export default function AppRoutes() {
         }
       />
 
+      <Route
+        path="api-reference"
+        element={
+          <SuspenseProgress>
+            <APIReference />
+          </SuspenseProgress>
+        }
+      />
+
       {/* Protected routes */}
       <Route
         path="/dashboard"
@@ -132,7 +142,7 @@ export default function AppRoutes() {
             </SuspenseProgress>
           }
         />
-        <Route
+        {/* <Route
           path="image-enhancement"
           element={
             <SuspenseProgress>
@@ -147,7 +157,7 @@ export default function AppRoutes() {
               <ObjectDetection />
             </SuspenseProgress>
           }
-        />
+        /> */}
         <Route
           path="ocr"
           element={
@@ -180,14 +190,14 @@ export default function AppRoutes() {
             </SuspenseProgress>
           }
         />
-        <Route
+        {/* <Route
           path="help"
           element={
             <SuspenseProgress>
               <Help />
             </SuspenseProgress>
           }
-        />
+        /> */}
         <Route
           path="profile"
           element={

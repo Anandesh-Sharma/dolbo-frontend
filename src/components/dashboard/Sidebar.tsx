@@ -23,12 +23,12 @@ const navigation = [
   { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Face Recognition', href: '/dashboard/face-recognition', icon: Camera },
   { name: 'Face Analysis', href: '/dashboard/face-analysis', icon: UserSearch },
-  { name: 'Object Detection', href: '/dashboard/object-detection', icon: Scan },
-  {
-    name: 'Image Enhancement',
-    href: '/dashboard/image-enhancement',
-    icon: ImageIcon,
-  },
+  // { name: 'Object Detection', href: '/dashboard/object-detection', icon: Scan },
+  // {
+  //   name: 'Image Enhancement',
+  //   href: '/dashboard/image-enhancement',
+  //   icon: ImageIcon,
+  // },
   { name: 'OCR', href: '/dashboard/ocr', icon: FileText },
   { name: 'ID Verification', href: '/dashboard/id-verification', icon: CreditCard },
 ];
@@ -43,7 +43,7 @@ const resources = [
   },
   { name: 'Billing', href: '/dashboard/billing', icon: Wallet },
   { name: 'Team', href: '/dashboard/team', icon: Users },
-  { name: 'Help', href: '/dashboard/help', icon: HelpCircle },
+  // { name: 'Help', href: '/dashboard/help', icon: HelpCircle },
 ];
 
 interface SidebarProps {

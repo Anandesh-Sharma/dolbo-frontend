@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { 
+import {
   Bell,
   Key,
   LogOut,
@@ -43,14 +43,14 @@ export default function UserDropdown() {
       {isOpen && (
         <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
           <div className="py-1">
-            <Link
+            {/* <Link
               to="/dashboard/profile"
               className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
               onClick={() => setIsOpen(false)}
             >
               <UserCircle className="h-4 w-4 mr-3" />
               Your Profile
-            </Link>
+            </Link> */}
             <Link
               to="/dashboard/api-keys"
               className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
@@ -59,14 +59,14 @@ export default function UserDropdown() {
               <Key className="h-4 w-4 mr-3" />
               API Keys
             </Link>
-            <Link
+            {/* <Link
               to="/dashboard/notifications"
               className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
               onClick={() => setIsOpen(false)}
             >
               <Bell className="h-4 w-4 mr-3" />
               Notifications
-            </Link>
+            </Link> */}
           </div>
 
           <div className="border-t border-gray-700 py-1">
